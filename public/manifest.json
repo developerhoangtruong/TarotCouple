@@ -1,0 +1,18 @@
+{
+  "name": "Tarot Couple — Bốc Bài Tarot AI Gen Z",
+  "short_name": "TarotCouple",
+  "description": "Trải nghiệm bốc bài Tarot AI phản chiếu tâm lý với Bà Cố Mỏ Hỗn & Tiên Tử Chữa Lành, xuất ảnh Story 9:16 cực chất.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A090E",
+  "theme_color": "#0A090E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
