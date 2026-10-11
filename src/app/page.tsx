@@ -25,6 +25,8 @@ import {
   BarChart3,
   Scale,
   Layers,
+  Smartphone,
+  Monitor,
 } from 'lucide-react';
 import { ALL_TAROT_CARDS, READERS } from '@/data/tarot-cards';
 import {
@@ -55,6 +57,7 @@ import { CoupleModeView } from '@/components/CoupleModeView';
 import { SpiritualWrappedModal } from '@/components/SpiritualWrappedModal';
 import { TikTokStudioModal } from '@/components/TikTokStudioModal';
 import { ReferralAndAdModal } from '@/components/ReferralAndAdModal';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 type RitualStep = 1 | 2 | 3 | 4;
 type AppMode = 'solo' | 'couple';
@@ -100,7 +103,12 @@ const BIRTH_YEAR_OPTIONS = Array.from(
 export default function TarotCoupleHomePage() {
   // Super-App Mode Switcher ('solo' vs 'couple') & URL invite param
   const [appMode, setAppMode] = useState<AppMode>('solo');
+  const activeMainMode = appMode;
+  const setActiveMainMode = setAppMode;
   const [inviteRoomCode, setInviteRoomCode] = useState<string | null>(null);
+
+  // Desktop iPhone 16 Pro Frame Simulator Mode (default false)
+  const [isPhoneSimulator, setIsPhoneSimulator] = useState<boolean>(false);
 
   // Navigation & Flow Steps (Solo Mode)
   const [step, setStep] = useState<RitualStep>(1);
@@ -620,162 +628,213 @@ export default function TarotCoupleHomePage() {
   }, [readingSuccess]);
 
   return (
-    <div className="min-h-dvh bg-[#09080D] text-[#F8F5F0] flex flex-col justify-between relative overflow-x-hidden">
-      {/* Subtle Ambient Gold-Obsidian Spotlight */}
+    <div className={isPhoneSimulator ? 'min-h-dvh bg-[#050408] sm:py-2' : ''}>
+      {/* Desktop Floating Simulator Mode Pill (sm: and above) */}
+      <div className="hidden sm:flex justify-center pt-2 pb-1 relative z-50">
+        <button
+          type="button"
+          onClick={() => setIsPhoneSimulator((prev) => !prev)}
+          data-testid="desktop-simulator-toggle-btn"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#171424]/95 hover:bg-[#231D36] border border-[#D4AF37]/45 text-xs font-bold text-[#F3E5AB] shadow-[0_4px_20px_rgba(0,0,0,0.6)] transition-all cursor-pointer"
+        >
+          {isPhoneSimulator ? (
+            <>
+              <Monitor className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>🖥️ Xem Toàn Màn Hình</span>
+            </>
+          ) : (
+            <>
+              <Smartphone className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>📱 Xem Khung Điện Thoại (iPhone 16 Pro)</span>
+            </>
+          )}
+        </button>
+      </div>
+
       <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.09)_0%,rgba(18,16,27,0.45)_45%,rgba(9,8,13,1)_85%)]"
-      />
+        className={
+          isPhoneSimulator
+            ? 'w-full min-h-dvh pb-28 pb-safe-nav bg-[#09080D] text-[#F8F5F0] flex flex-col justify-between relative overflow-x-hidden max-w-[420px] mx-auto my-4 rounded-[42px] border-[6px] border-[#262135] shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-hidden'
+            : 'w-full min-h-dvh pb-28 pb-safe-nav bg-[#09080D] text-[#F8F5F0] flex flex-col justify-between relative overflow-x-hidden'
+        }
+      >
+        {/* Subtle Ambient Gold-Obsidian Spotlight */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.09)_0%,rgba(18,16,27,0.45)_45%,rgba(9,8,13,1)_85%)]"
+        />
 
-      {/* ================= TOP NAVIGATION BAR ================= */}
-      <header className="sticky top-0 z-40 h-16 border-b border-[#D4AF37]/20 bg-[#09080D]/90 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2">
-          {/* Brand Logo */}
-          <button
-            type="button"
-            onClick={handleResetRitual}
-            className="flex items-center gap-2 text-left group cursor-pointer shrink-0"
-          >
-            <div className="w-9 h-9 rounded-xl bg-[#171424] border border-[#D4AF37]/50 flex items-center justify-center text-[#F3E5AB] shadow-[0_0_18px_rgba(212,175,55,0.2)] group-hover:border-[#F3E5AB] transition-colors">
-              <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+        {/* iPhone 16 Pro Dynamic Island Notch (visible when isPhoneSimulator is active) */}
+        {isPhoneSimulator ? (
+          <div className="relative z-40 flex items-center justify-between px-6 pt-2.5 pb-1.5 bg-[#09080D] border-b border-white/5 select-none">
+            <span className="text-[11px] font-bold text-[#F8F5F0]/85 tracking-tight">
+              9:41
+            </span>
+            <div className="h-5 w-28 rounded-full bg-black border border-white/15 shadow-inner flex items-center justify-end px-2.5">
+              <span className="h-2 w-2 rounded-full bg-[#1A162B] ring-1 ring-emerald-400/50" />
             </div>
-            <div>
-              <span className="font-display text-base sm:text-xl font-bold tracking-wider text-[#F8F5F0] block leading-none">
-                TAROT COUPLE
-              </span>
-              <span className="text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-[#D4AF37]">
-                RWS 1909 • Super-App
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[#F8F5F0]/80">
+              <span>5G</span>
+              <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold">
+                100%
               </span>
             </div>
-          </button>
+          </div>
+        ) : null}
 
-          {/* Right Top Bar Badges: Ví Sao | Điểm danh Streak | Lượt miễn phí | Analytics Funnel | Pháp lý */}
-          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-1">
-            {/* 1. Ví Sao (WalletPayOSModal) */}
+        {/* ================= TOP NAVIGATION BAR ================= */}
+        <header className="sticky top-0 z-40 border-b border-[#D4AF37]/20 bg-[#09080D]/95 backdrop-blur-md">
+          {/* Primary Single-Row Thumb-Friendly Bar */}
+          <div className="max-w-6xl mx-auto h-14 px-3 sm:px-4 flex items-center justify-between gap-2">
+            {/* Left: TarotCouple Emblem + Brand title */}
             <button
               type="button"
-              onClick={() => setIsWalletModalOpen(true)}
-              data-testid="topbar-wallet-btn"
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-[#241B35] to-[#171223] hover:border-[#F3E5AB] border border-[#D4AF37]/50 text-xs font-bold text-[#F3E5AB] transition-all cursor-pointer shrink-0"
-              title="Ví Sao & Cổng Thanh Toán VietQR PayOS"
+              onClick={handleResetRitual}
+              className="flex items-center gap-2 text-left group cursor-pointer shrink-0"
             >
-              <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
-              <span>⭐ {quota.starsBalance ?? 15} Sao</span>
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#171424] border border-[#D4AF37]/50 flex items-center justify-center text-[#F3E5AB] shadow-[0_0_18px_rgba(212,175,55,0.2)] group-hover:border-[#F3E5AB] transition-colors">
+                <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+              </div>
+              <div>
+                <span className="font-display text-sm sm:text-lg font-bold tracking-wider text-[#F8F5F0] block leading-none">
+                  TAROT COUPLE
+                </span>
+                <span className="text-[8px] sm:text-[9px] tracking-[0.14em] uppercase text-[#D4AF37]">
+                  RWS 1909 • Super-App
+                </span>
+              </div>
             </button>
 
-            {/* 2. Điểm danh Ngày (DailyStreakModal) */}
-            <button
-              type="button"
-              onClick={() => setIsDailyStreakModalOpen(true)}
-              data-testid="topbar-streak-btn"
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/45 text-xs font-bold text-amber-200 transition-colors cursor-pointer shrink-0"
-              title="Thông Điệp Vũ Trụ Hàng Ngày & Chuỗi Điểm Danh Streak"
-            >
-              <Flame className="w-3.5 h-3.5 text-amber-400" />
-              <span>🔥 {quota.streakDays ?? 1} ngày</span>
-            </button>
+            {/* Right: Compact ⭐ {starsBalance} pill, 🔮 {remainingToday} lượt pill, and Desktop 📱 Khung ĐT toggle */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* 1. Ví Sao (WalletPayOSModal) */}
+              <button
+                type="button"
+                onClick={() => setIsWalletModalOpen(true)}
+                data-testid="topbar-wallet-btn"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-gradient-to-r from-[#241B35] to-[#171223] hover:border-[#F3E5AB] border border-[#D4AF37]/50 text-[11px] sm:text-xs font-bold text-[#F3E5AB] transition-all cursor-pointer shrink-0"
+                title="Ví Sao & Cổng Thanh Toán VietQR PayOS"
+              >
+                <span>⭐ {quota.starsBalance ?? 15}</span>
+              </button>
 
-            {/* 3. Lượt miễn phí */}
-            <button
-              type="button"
-              onClick={() => setIsRewardModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#171424] hover:bg-[#221D34] border border-[#D4AF37]/35 text-xs font-medium text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
-              title="Lượt trải bài miễn phí hôm nay"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="hidden md:inline">Miễn phí:</span>
-              <strong className="text-[#F8F5F0] font-bold">
-                {quota.remainingToday} lượt
-              </strong>
-            </button>
+              {/* 2. Lượt miễn phí */}
+              <button
+                type="button"
+                onClick={() => setIsRewardModalOpen(true)}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#171424] hover:bg-[#221D34] border border-[#D4AF37]/35 text-[11px] sm:text-xs font-semibold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
+                title="Lượt trải bài miễn phí hôm nay"
+              >
+                <span>🔮 {quota.remainingToday} lượt</span>
+              </button>
 
-            {/* 4. Phase 4 Growth: Hồ Sơ Tâm Linh (Wrapped) */}
+              {/* 3. Desktop Khung ĐT Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setIsPhoneSimulator((prev) => !prev)}
+                className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-[#D4AF37]/35 text-[11px] font-semibold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
+                title="Chuyển đổi Khung Điện Thoại (iPhone 16 Pro) / Toàn Màn Hình"
+              >
+                <span>{isPhoneSimulator ? '🖥️ Toàn Màn' : '📱 Khung ĐT'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Subtle Horizontal Scrollable Quick-Chip Bar (never wraps onto multiple lines) */}
+          <div className="max-w-6xl mx-auto px-3 sm:px-4 py-1.5 border-t border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
               type="button"
               onClick={() => setIsWrappedModalOpen(true)}
               data-testid="topbar-wrapped-btn"
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-purple-500/15 hover:bg-purple-500/25 border border-[#D4AF37]/45 text-xs font-bold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/15 hover:bg-purple-500/25 border border-[#D4AF37]/40 text-[11px] font-bold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
               title="Hồ Sơ Tâm Linh Cuối Tháng (Spiritual Wrapped 9:16)"
             >
-              <span>🌙 Hồ Sơ Tâm Linh (Wrapped)</span>
+              <span>🌙 Wrapped Tháng 10</span>
             </button>
 
-            {/* 5. Phase 4 Growth: TikTok Studio */}
             <button
               type="button"
               onClick={() => setIsTikTokStudioModalOpen(true)}
               data-testid="topbar-tiktok-btn"
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/40 text-xs font-bold text-rose-200 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/40 text-[11px] font-bold text-rose-200 transition-colors cursor-pointer shrink-0"
               title="Xưởng Seeding TikTok & Reels 0đ (3-Slide Carousel Studio)"
             >
               <span>🎬 TikTok Studio</span>
             </button>
 
-            {/* 6. Phase 4 Growth: Mời Bạn (+5 ⭐) */}
             <button
               type="button"
               onClick={() => setIsReferralModalOpen(true)}
               data-testid="topbar-referral-btn"
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/45 text-xs font-bold text-emerald-200 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/40 text-[11px] font-bold text-emerald-200 transition-colors cursor-pointer shrink-0"
               title="Mời Bạn Bè Nhận +5 Sao ⭐ & Xem Quảng Cáo Thưởng"
             >
-              <span>🎁 Mời Bạn (+5 ⭐)</span>
+              <span>🎁 Mời Bạn +5⭐</span>
             </button>
 
-            {/* 7. Analytics (FunnelAnalyticsModal) */}
+            <button
+              type="button"
+              onClick={() => setIsDailyStreakModalOpen(true)}
+              data-testid="topbar-streak-btn"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition-colors cursor-pointer shrink-0"
+              title="Thông Điệp Vũ Trụ Hàng Ngày & Chuỗi Điểm Danh Streak"
+            >
+              <span>🔥 {quota.streakDays ?? 1} ngày</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setIsFunnelModalOpen(true)}
               data-testid="topbar-funnel-btn"
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-semibold text-[#D8D2E7] transition-colors cursor-pointer shrink-0"
+              className={`${
+                isPhoneSimulator ? 'hidden' : 'hidden md:inline-flex'
+              } items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-[11px] font-semibold text-[#D8D2E7] transition-colors cursor-pointer shrink-0`}
               title="Bảng Kiểm Chứng Giả Định Thị Trường & Chi Phí AI"
             >
-              <BarChart3 className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span className="hidden sm:inline">📊 Funnel</span>
+              <span>📊 Funnel</span>
             </button>
 
-            {/* 8. Pháp lý */}
             <button
               type="button"
               onClick={() => setIsLegalModalOpen(true)}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-[#A39BB5] hover:text-[#F8F5F0] transition-colors cursor-pointer shrink-0"
+              className={`${
+                isPhoneSimulator ? 'hidden' : 'hidden lg:inline-flex'
+              } items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-[#A39BB5] hover:text-[#F8F5F0] transition-colors cursor-pointer shrink-0`}
               title="Điều khoản, Quyền riêng tư & Chính sách độ tuổi 10+"
             >
-              <Scale className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span className="hidden lg:inline">⚖️ Pháp lý</span>
+              <span>⚖️ Pháp lý</span>
             </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* ================= MAIN STAGE ================= */}
-      <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 py-6 sm:py-8 space-y-6">
-        {/* Super-App Mode Switcher Tabs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-2xl mx-auto bg-[#12101B] border border-[#D4AF37]/35 rounded-2xl p-1.5 shadow-lg">
-          <button
-            type="button"
-            onClick={() => setAppMode('solo')}
-            className={`w-full sm:flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              appMode === 'solo'
-                ? 'bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-[#09080D] shadow-[0_0_20px_rgba(212,175,55,0.4)]'
-                : 'text-[#A39BB5] hover:text-[#F8F5F0] hover:bg-white/5'
-            }`}
-          >
-            <span>🔮 Bốc Bài Cá Nhân (Solo 3 Lá)</span>
-          </button>
+        {/* ================= MAIN STAGE ================= */}
+        <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-5">
+          {/* Super-App Mode Switcher Tabs (Compact 2-Column Pill on Mobile & Desktop) */}
+          <div className="grid grid-cols-2 gap-1.5 max-w-2xl mx-auto bg-[#12101B] border border-[#D4AF37]/35 rounded-2xl p-1.5 shadow-lg">
+            <button
+              type="button"
+              onClick={() => setActiveMainMode('solo')}
+              className={`w-full py-2.5 px-2.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeMainMode === 'solo'
+                  ? 'bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-[#09080D] shadow-[0_0_20px_rgba(212,175,55,0.4)]'
+                  : 'text-[#A39BB5] hover:text-[#F8F5F0] hover:bg-white/5'
+              }`}
+            >
+              <span className="truncate">🔮 Bốc Bài Cá Nhân</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setAppMode('couple')}
-            className={`w-full sm:flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              appMode === 'couple'
-                ? 'bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-[#09080D] shadow-[0_0_20px_rgba(212,175,55,0.4)]'
-                : 'text-[#A39BB5] hover:text-[#F8F5F0] hover:bg-white/5'
-            }`}
-          >
-            <span>💞 Bói Đôi TarotCouple (Check Hợp Cạ & Red Flag)</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => setActiveMainMode('couple')}
+              className={`w-full py-2.5 px-2.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeMainMode === 'couple'
+                  ? 'bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-[#09080D] shadow-[0_0_20px_rgba(212,175,55,0.4)]'
+                  : 'text-[#A39BB5] hover:text-[#F8F5F0] hover:bg-white/5'
+              }`}
+            >
+              <span className="truncate">💞 Bói Đôi TarotCouple</span>
+            </button>
+          </div>
 
         {/* ================= MODE 2: COUPLE MODE VIEW ================= */}
         {appMode === 'couple' ? (
@@ -842,23 +901,35 @@ export default function TarotCoupleHomePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="space-y-8"
+                className="space-y-6 sm:space-y-8"
               >
                 {/* Hero Header */}
-                <div className="border-b border-[#D4AF37]/20 pb-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">
+                <div className="border-b border-[#D4AF37]/20 pb-5 sm:pb-6 space-y-2">
+                  <p className="text-[11px] sm:text-xs uppercase tracking-[0.18em] text-[#D4AF37] font-semibold">
                     ✦ Nghi Thức Tarot Phản Chiếu Tâm Lý • 4 Persona & Trọn Bộ 78 Lá RWS ✦
                   </p>
-                  <h1 className="font-display text-3xl sm:text-5xl font-bold text-[#F8F5F0] leading-[1.12] tracking-tight">
+                  <h1
+                    className={`font-display font-bold text-[#F8F5F0] leading-[1.15] tracking-tight ${
+                      isPhoneSimulator
+                        ? 'text-2xl sm:text-3xl'
+                        : 'text-2xl sm:text-5xl'
+                    }`}
+                  >
                     Chọn Người Đọc Bài Cho Đêm Suy Của Bạn.
                   </h1>
-                  <p className="text-sm text-[#A39BB5] max-w-2xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#A39BB5] max-w-2xl leading-relaxed">
                     Lá bài do hệ thống xáo ngẫu nhiên chuẩn mật mã (CSPRNG). Tự tay rút 3 lá định mệnh, mở khóa Lá Làm Rõ thứ 4 và xuất ngay ảnh Story 9:16 sắc sảo.
                   </p>
                 </div>
 
                 {/* All 4 Readers Selectable Bento Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div
+                  className={`grid gap-4 sm:gap-5 ${
+                    isPhoneSimulator
+                      ? 'grid-cols-1'
+                      : 'grid-cols-1 md:grid-cols-2'
+                  }`}
+                >
                   {READERS.map((reader) => {
                     const isSelected = selectedReaderId === reader.id;
                     const isBaCo = reader.id === 'ba_co_mo_hon';
@@ -867,18 +938,18 @@ export default function TarotCoupleHomePage() {
                       <div
                         key={reader.id}
                         onClick={() => setSelectedReaderId(reader.id as ReaderId)}
-                        className={`relative rounded-3xl p-6 transition-all duration-300 flex flex-col justify-between cursor-pointer ${
+                        className={`relative rounded-3xl p-4 sm:p-6 transition-all duration-300 flex flex-col justify-between cursor-pointer ${
                           isSelected
                             ? 'bg-gradient-to-b from-[#1E162B] to-[#120F1D] border-2 border-[#D4AF37] shadow-[0_16px_45px_rgba(212,175,55,0.22)]'
                             : 'bg-[#12101B] border border-[#D4AF37]/30 hover:border-[#D4AF37]/70'
                         }`}
                       >
-                        <div className="space-y-4">
+                        <div className="space-y-3.5 sm:space-y-4">
                           {/* Top Row: Avatar + Badges */}
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-center gap-3.5">
+                          <div className="flex items-start justify-between gap-2.5">
+                            <div className="flex items-center gap-3">
                               <div
-                                className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl font-bold border shadow-inner"
+                                className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold border shadow-inner shrink-0"
                                 style={{
                                   borderColor: reader.accent_color,
                                   backgroundColor: 'rgba(9, 8, 13, 0.75)',
@@ -888,12 +959,12 @@ export default function TarotCoupleHomePage() {
                                 {reader.avatar_symbol}
                               </div>
                               <div>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <h2 className="font-display text-xl sm:text-2xl font-bold text-[#F8F5F0]">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <h2 className="font-display text-lg sm:text-2xl font-bold text-[#F8F5F0]">
                                     {reader.name}
                                   </h2>
                                   {isBaCo ? (
-                                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-rose-500/20 text-rose-200 border border-rose-400/40">
+                                    <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase bg-rose-500/20 text-rose-200 border border-rose-400/40">
                                       Hot nhất đêm nay
                                     </span>
                                   ) : null}
@@ -904,18 +975,18 @@ export default function TarotCoupleHomePage() {
                               </div>
                             </div>
 
-                            <span className="px-3 py-1 rounded-full text-xs font-semibold border shrink-0 bg-[#D4AF37]/15 text-[#F3E5AB] border-[#D4AF37]/40">
+                            <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold border shrink-0 bg-[#D4AF37]/15 text-[#F3E5AB] border-[#D4AF37]/40">
                               {reader.badge}
                             </span>
                           </div>
 
                           {/* Tagline */}
-                          <p className="text-sm text-[#D8D2E7] leading-relaxed">
+                          <p className="text-xs sm:text-sm text-[#D8D2E7] leading-relaxed">
                             {reader.tagline}
                           </p>
 
                           {/* Sample Quote Preview */}
-                          <div className="p-3.5 rounded-2xl bg-[#09080D]/80 border border-white/10">
+                          <div className="p-3 rounded-2xl bg-[#09080D]/80 border border-white/10">
                             <p className="text-xs italic text-[#F3E5AB]">
                               “{reader.sample_quote}”
                             </p>
@@ -923,14 +994,14 @@ export default function TarotCoupleHomePage() {
                         </div>
 
                         {/* Footer Status */}
-                        <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
-                          <span className="text-xs text-[#A39BB5]">
+                        <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between gap-2">
+                          <span className="text-[11px] text-[#A39BB5] truncate">
                             {isBaCo
                               ? 'Tự động chuyển sang Bà Ngoại Vui Tính nếu 10–15 tuổi'
                               : `Phong cách: ${reader.title}`}
                           </span>
                           <span
-                            className={`inline-flex items-center gap-1.5 text-xs font-bold ${
+                            className={`inline-flex items-center gap-1 text-xs font-bold shrink-0 ${
                               isSelected ? 'text-[#F3E5AB]' : 'text-[#D4AF37]'
                             }`}
                           >
@@ -950,27 +1021,41 @@ export default function TarotCoupleHomePage() {
                 </div>
 
                 {/* Couple Mode Quick Switch Banner + Primary Step 1 CTA */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center pt-2">
-                  <div className="lg:col-span-7 p-5 rounded-3xl bg-[#12101B] border border-[#D4AF37]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div
+                  className={`grid gap-4 items-center pt-1 ${
+                    isPhoneSimulator
+                      ? 'grid-cols-1'
+                      : 'grid-cols-1 lg:grid-cols-12'
+                  }`}
+                >
+                  <div
+                    className={`${
+                      isPhoneSimulator ? '' : 'lg:col-span-7'
+                    } p-4 sm:p-5 rounded-3xl bg-[#12101B] border border-[#D4AF37]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5`}
+                  >
                     <div className="space-y-1">
                       <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#D4AF37]">
                         <Users className="w-4 h-4" />
                         <span>Chế độ Bói Đôi (TarotCouple • Hợp Cạ & Red Flag 🚩)</span>
                       </div>
-                      <p className="text-xs sm:text-sm text-[#A39BB5]">
+                      <p className="text-xs text-[#A39BB5]">
                         Tự soi mối quan hệ hoặc tạo phòng bí mật 48h mời người ấy cùng rút bài — ẩn bảo mật câu hỏi riêng tư.
                       </p>
                     </div>
                     <button
                       type="button"
-                      onClick={() => setAppMode('couple')}
+                      onClick={() => setActiveMainMode('couple')}
                       className="px-4 py-2.5 rounded-2xl bg-[#171424] hover:bg-[#231E36] border border-[#D4AF37]/40 text-xs font-semibold text-[#F3E5AB] shrink-0 transition-colors cursor-pointer"
                     >
                       Mở Bói Đôi ngay →
                     </button>
                   </div>
 
-                  <div className="lg:col-span-5 flex justify-end">
+                  <div
+                    className={`${
+                      isPhoneSimulator ? '' : 'lg:col-span-5'
+                    } flex justify-end`}
+                  >
                     <button
                       type="button"
                       onClick={() => {
@@ -983,7 +1068,7 @@ export default function TarotCoupleHomePage() {
                         }
                         setStep(2);
                       }}
-                      className="w-full inline-flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#E6C665] to-[#D4AF37] text-[#09080D] font-bold text-base shadow-[0_10px_30px_rgba(212,175,55,0.35)] hover:brightness-110 transition-all cursor-pointer active:scale-[0.98]"
+                      className="w-full inline-flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#E6C665] to-[#D4AF37] text-[#09080D] font-bold text-sm sm:text-base shadow-[0_10px_30px_rgba(212,175,55,0.35)] hover:brightness-110 transition-all cursor-pointer active:scale-[0.98]"
                     >
                       <span>Bước vào Lều {activeReaderObj.name}</span>
                       <ChevronRight className="w-5 h-5" />
@@ -999,20 +1084,20 @@ export default function TarotCoupleHomePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35 }}
-                className="max-w-3xl mx-auto space-y-6"
+                className="max-w-3xl mx-auto space-y-5"
               >
                 {/* Header with Back Button */}
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center justify-between gap-3">
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#A39BB5] hover:text-[#F8F5F0] cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs sm:text-sm text-[#A39BB5] hover:text-[#F8F5F0] cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span>Đổi Reader khác</span>
                   </button>
 
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#171424] border border-[#D4AF37]/40 text-xs text-[#F3E5AB]">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#171424] border border-[#D4AF37]/40 text-xs text-[#F3E5AB]">
                     <span>{activeReaderObj.avatar_symbol}</span>
                     <span>
                       Reader:{' '}
@@ -1026,9 +1111,9 @@ export default function TarotCoupleHomePage() {
                   </div>
                 </div>
 
-                <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-6 sm:p-8 space-y-6 shadow-[0_20px_60px_rgba(0,0,0,0.65)]">
+                <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-[0_20px_60px_rgba(0,0,0,0.65)]">
                   <div>
-                    <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#F8F5F0]">
+                    <h2 className="font-display text-xl sm:text-3xl font-bold text-[#F8F5F0]">
                       Kể Chuyện & Chọn Chủ Đề Trải Bài
                     </h2>
                     <p className="text-xs sm:text-sm text-[#A39BB5] mt-1">
@@ -1037,7 +1122,13 @@ export default function TarotCoupleHomePage() {
                   </div>
 
                   {/* Row 1: Nickname + Birth Year */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div
+                    className={`grid gap-4 ${
+                      isPhoneSimulator
+                        ? 'grid-cols-1'
+                        : 'grid-cols-1 sm:grid-cols-2'
+                    }`}
+                  >
                     <div className="space-y-2">
                       <label
                         htmlFor="nickname-input"
@@ -1109,7 +1200,7 @@ export default function TarotCoupleHomePage() {
                   {agePolicy.isKidTeenSafeMode ? (
                     <div
                       data-testid="kid-teen-safe-badge"
-                      className="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-400/50 text-emerald-100 text-xs sm:text-sm leading-relaxed shadow-[0_0_25px_rgba(16,185,129,0.2)]"
+                      className="p-3.5 sm:p-4 rounded-2xl bg-emerald-950/60 border border-emerald-400/50 text-emerald-100 text-xs sm:text-sm leading-relaxed shadow-[0_0_25px_rgba(16,185,129,0.2)]"
                     >
                       <strong>
                         🌸 Chế độ Học Đường Trong Sáng (10–15 tuổi) đã kích hoạt:
@@ -1117,9 +1208,9 @@ export default function TarotCoupleHomePage() {
                       Chủ đề học đường lành mạnh • Bà Ngoại Vui Tính • Khóa nạp tiền 100%.
                     </div>
                   ) : (
-                    <div className="px-4 py-2.5 rounded-2xl bg-[#171424] border border-white/10 text-xs text-[#A39BB5] flex items-center justify-between">
+                    <div className="px-4 py-2.5 rounded-2xl bg-[#171424] border border-white/10 text-xs text-[#A39BB5] flex items-center justify-between gap-2">
                       <span>{agePolicy.policySummaryVi}</span>
-                      <span className="text-[#F3E5AB] font-semibold">
+                      <span className="text-[#F3E5AB] font-semibold shrink-0">
                         {agePolicy.age} tuổi
                       </span>
                     </div>
@@ -1131,7 +1222,13 @@ export default function TarotCoupleHomePage() {
                       <Layers className="w-3.5 h-3.5 text-[#D4AF37]" />
                       Chọn Bộ Bài Tarot (Deck Mode)
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div
+                      className={`grid gap-3 ${
+                        isPhoneSimulator
+                          ? 'grid-cols-1'
+                          : 'grid-cols-1 sm:grid-cols-2'
+                      }`}
+                    >
                       <button
                         type="button"
                         onClick={() => setDeckMode('major_22')}
@@ -1141,11 +1238,11 @@ export default function TarotCoupleHomePage() {
                             : 'bg-[#09080D]/70 border-white/10 hover:border-[#D4AF37]/40'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-2">
                           <span className="font-display text-sm sm:text-base font-bold text-[#F8F5F0]">
                             Bộ 22 Lá Ẩn Chính (Major Arcana)
                           </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D4AF37]/20 text-[#F3E5AB]">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D4AF37]/20 text-[#F3E5AB] shrink-0">
                             Cô đọng
                           </span>
                         </div>
@@ -1163,11 +1260,11 @@ export default function TarotCoupleHomePage() {
                             : 'bg-[#09080D]/70 border-white/10 hover:border-[#D4AF37]/40'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-2">
                           <span className="font-display text-sm sm:text-base font-bold text-[#F8F5F0]">
                             Trọn Bộ 78 Lá Tarot (RWS 1909)
                           </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 shrink-0">
                             Đầy đủ 78 lá
                           </span>
                         </div>
@@ -1183,7 +1280,13 @@ export default function TarotCoupleHomePage() {
                     <label className="block text-xs font-semibold uppercase tracking-wider text-[#F3E5AB]">
                       Chọn Chủ Đề Trải Bài 3 Lá
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div
+                      className={`grid gap-3 ${
+                        isPhoneSimulator
+                          ? 'grid-cols-1'
+                          : 'grid-cols-1 sm:grid-cols-3'
+                      }`}
+                    >
                       {agePolicy.allowedTopics.map((topicItem) => {
                         const isSelected = selectedTopic === topicItem.id;
                         return (
@@ -1198,7 +1301,7 @@ export default function TarotCoupleHomePage() {
                                 setQuestionText(samples[0]);
                               }
                             }}
-                            className={`p-4 rounded-2xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                            className={`p-3.5 sm:p-4 rounded-2xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
                               isSelected
                                 ? 'bg-gradient-to-b from-[#231B32] to-[#151120] border-[#F3E5AB] shadow-[0_0_20px_rgba(212,175,55,0.25)]'
                                 : 'bg-[#09080D]/70 border-white/10 hover:border-[#D4AF37]/50'
@@ -1249,7 +1352,7 @@ export default function TarotCoupleHomePage() {
                       value={questionText}
                       onChange={(e) => setQuestionText(e.target.value)}
                       placeholder="Kể ngắn gọn hoàn cảnh của bạn để 3 lá bài phản chiếu rõ nhất..."
-                      className="w-full p-4 rounded-2xl bg-[#09080D] border border-[#D4AF37]/35 text-sm text-[#F8F5F0] placeholder:text-[#A39BB5]/50 focus:outline-none focus:border-[#F3E5AB] leading-relaxed"
+                      className="w-full p-3.5 sm:p-4 rounded-2xl bg-[#09080D] border border-[#D4AF37]/35 text-sm text-[#F8F5F0] placeholder:text-[#A39BB5]/50 focus:outline-none focus:border-[#F3E5AB] leading-relaxed"
                     />
 
                     {/* Sample Question Chips */}
@@ -1285,7 +1388,7 @@ export default function TarotCoupleHomePage() {
                   <button
                     type="button"
                     onClick={handleProceedToStep3}
-                    className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#E5C158] to-[#D4AF37] text-[#09080D] font-bold text-base shadow-[0_10px_30px_rgba(212,175,55,0.35)] hover:brightness-110 transition-all cursor-pointer active:scale-[0.98]"
+                    className="w-full inline-flex items-center justify-center gap-2 py-4 px-5 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#E5C158] to-[#D4AF37] text-[#09080D] font-bold text-sm sm:text-base shadow-[0_10px_30px_rgba(212,175,55,0.35)] hover:brightness-110 transition-all cursor-pointer active:scale-[0.98]"
                   >
                     <Wand2 className="w-5 h-5" />
                     <span>Bắt Đầu Nghi Thức Xào Bài & Rút 3 Lá</span>
@@ -1299,14 +1402,14 @@ export default function TarotCoupleHomePage() {
               <motion.section
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="max-w-4xl mx-auto space-y-6"
+                className="max-w-4xl mx-auto space-y-5"
               >
                 {/* Top Context Bar + Deck Mode Toggle */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-2.5">
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#A39BB5] hover:text-[#F8F5F0] cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs sm:text-sm text-[#A39BB5] hover:text-[#F8F5F0] cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span>Sửa câu hỏi</span>
@@ -1320,7 +1423,7 @@ export default function TarotCoupleHomePage() {
                           setDeckMode('major_22');
                           setSelectedFanIndices([]);
                         }}
-                        className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer ${
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer ${
                           deckMode === 'major_22'
                             ? 'bg-[#D4AF37] text-[#09080D]'
                             : 'text-[#A39BB5]'
@@ -1334,7 +1437,7 @@ export default function TarotCoupleHomePage() {
                           setDeckMode('full_78');
                           setSelectedFanIndices([]);
                         }}
-                        className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer ${
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer ${
                           deckMode === 'full_78'
                             ? 'bg-[#D4AF37] text-[#09080D]'
                             : 'text-[#A39BB5]'
@@ -1344,7 +1447,7 @@ export default function TarotCoupleHomePage() {
                       </button>
                     </div>
 
-                    <div className="text-xs text-[#F3E5AB] bg-[#171424] border border-[#D4AF37]/30 px-3.5 py-1.5 rounded-full">
+                    <div className="text-[11px] text-[#F3E5AB] bg-[#171424] border border-[#D4AF37]/30 px-3 py-1 rounded-full">
                       Chủ đề:{' '}
                       <strong>
                         {
@@ -1359,9 +1462,9 @@ export default function TarotCoupleHomePage() {
 
                 {/* SUB-STAGE 3A: ENERGY CHARGE & SHUFFLE */}
                 {shuffleStage === 'charge' ? (
-                  <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-8 sm:p-12 text-center space-y-8 shadow-[0_20px_60px_rgba(0,0,0,0.75)]">
+                  <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-6 sm:p-12 text-center space-y-7 shadow-[0_20px_60px_rgba(0,0,0,0.75)]">
                     <div className="space-y-2 max-w-lg mx-auto">
-                      <span className="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">
+                      <span className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">
                         ✦ Nghi Thức Kết Nối Trực Giác ({totalDeckCards} Lá Bài) ✦
                       </span>
                       <h2 className="font-display text-2xl sm:text-4xl font-bold text-[#F8F5F0]">
@@ -1373,7 +1476,7 @@ export default function TarotCoupleHomePage() {
                     </div>
 
                     {/* Animated Shuffling Deck Stack */}
-                    <div className="relative h-52 flex items-center justify-center">
+                    <div className="relative h-48 sm:h-52 flex items-center justify-center">
                       {[0, 1, 2, 3, 4].map((idx) => (
                         <motion.div
                           key={idx}
@@ -1412,9 +1515,9 @@ export default function TarotCoupleHomePage() {
                         onMouseDown={startEnergyCharge}
                         onTouchStart={startEnergyCharge}
                         onClick={startEnergyCharge}
-                        className="relative inline-flex items-center justify-center px-8 py-4 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-[#09080D] font-bold text-sm sm:text-base shadow-[0_0_35px_rgba(212,175,55,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                        className="relative inline-flex items-center justify-center px-6 sm:px-8 py-4 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] text-[#09080D] font-bold text-xs sm:text-base shadow-[0_0_35px_rgba(212,175,55,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                       >
-                        <Flame className="w-5 h-5 mr-2" />
+                        <Flame className="w-5 h-5 mr-2 shrink-0" />
                         <span>
                           {isCharging
                             ? `Đang xáo ${totalDeckCards} lá bài & hội tụ năng lượng... ${chargeProgress}%`
@@ -1450,10 +1553,10 @@ export default function TarotCoupleHomePage() {
 
                 {/* SUB-STAGE 3B: ARC FAN PICKER */}
                 {shuffleStage === 'fan' ? (
-                  <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-5 sm:p-8 space-y-6 shadow-[0_20px_60px_rgba(0,0,0,0.75)]">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                  <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-4 sm:p-8 space-y-5 shadow-[0_20px_60px_rgba(0,0,0,0.75)]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3.5">
                       <div>
-                        <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#F8F5F0]">
+                        <h2 className="font-display text-xl sm:text-3xl font-bold text-[#F8F5F0]">
                           Chạm Chọn 3 Lá Bài Định Mệnh ({selectedFanIndices.length}/3)
                         </h2>
                         <p className="text-xs sm:text-sm text-[#A39BB5]">
@@ -1470,36 +1573,36 @@ export default function TarotCoupleHomePage() {
                         type="button"
                         disabled={isSubmitting}
                         onClick={handleQuickPickThree}
-                        className="px-4 py-2 rounded-xl bg-[#171424] hover:bg-[#241E38] border border-[#D4AF37]/45 text-xs font-semibold text-[#F3E5AB] shrink-0 transition-colors cursor-pointer"
+                        className="px-3.5 py-2 rounded-xl bg-[#171424] hover:bg-[#241E38] border border-[#D4AF37]/45 text-xs font-semibold text-[#F3E5AB] shrink-0 transition-colors cursor-pointer"
                       >
                         ✨ Rút nhanh 3 lá theo trực giác
                       </button>
                     </div>
 
-                    {/* 3 Spread Position Slots */}
-                    <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                    {/* 3 Spread Position Slots (Sticky & Compact 3-Column Grid for 375px Phone Screen) */}
+                    <div className="sticky top-24 z-20 grid grid-cols-3 gap-2 sm:gap-3 bg-[#12101B]/95 backdrop-blur-md py-1">
                       {[0, 1, 2].map((slotIdx) => {
                         const pickedFanIdx = selectedFanIndices[slotIdx];
                         const isFilled = pickedFanIdx !== undefined;
                         return (
                           <div
                             key={slotIdx}
-                            className={`p-3 sm:p-4 rounded-2xl border text-center transition-all ${
+                            className={`p-2 sm:p-3.5 rounded-2xl border text-center transition-all ${
                               isFilled
                                 ? 'bg-[#1D162B] border-[#F3E5AB] shadow-[0_0_20px_rgba(212,175,55,0.25)]'
-                                : 'bg-[#09080D]/70 border-dashed border-[#D4AF37]/35'
+                                : 'bg-[#09080D]/80 border-dashed border-[#D4AF37]/35'
                             }`}
                           >
-                            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-[#D4AF37] font-semibold block">
+                            <span className="text-[9px] sm:text-xs uppercase tracking-wider text-[#D4AF37] font-semibold block">
                               Vị trí 0{slotIdx + 1}
                             </span>
-                            <p className="font-display text-sm sm:text-base font-bold text-[#F8F5F0] truncate mt-0.5">
+                            <p className="font-display text-xs sm:text-base font-bold text-[#F8F5F0] truncate mt-0.5">
                               {currentSpreadPositions[slotIdx]}
                             </p>
-                            <span className="mt-2 inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-black/50 text-[#F3E5AB] border border-[#D4AF37]/30">
+                            <span className="mt-1.5 inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-black/50 text-[#F3E5AB] border border-[#D4AF37]/30 truncate max-w-full">
                               {isFilled
-                                ? `Đã chọn lá #${pickedFanIdx + 1}`
-                                : 'Đang chờ rút...'}
+                                ? `Lá #${pickedFanIdx + 1}`
+                                : 'Chờ rút...'}
                             </span>
                           </div>
                         );
@@ -1526,7 +1629,13 @@ export default function TarotCoupleHomePage() {
                       </div>
                     ) : (
                       /* Interactive Arc Fan Grid (22 or 78 cards) */
-                      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-2 sm:gap-2.5 pt-2 pb-4 justify-items-center max-h-[420px] overflow-y-auto pr-1">
+                      <div
+                        className={`grid gap-2 sm:gap-2.5 pt-2 pb-4 justify-items-center max-h-[420px] overflow-y-auto pr-1 ${
+                          isPhoneSimulator
+                            ? 'grid-cols-4'
+                            : 'grid-cols-4 sm:grid-cols-6 md:grid-cols-11'
+                        }`}
+                      >
                         {Array.from({ length: totalDeckCards }, (_, fanIdx) => {
                           const pickOrder = selectedFanIndices.indexOf(fanIdx);
                           const isPicked = pickOrder !== -1;
@@ -1583,10 +1692,10 @@ export default function TarotCoupleHomePage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45 }}
-                className="space-y-8"
+                className="space-y-6 sm:space-y-8"
               >
                 {/* Top Summary Banner */}
-                <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-5 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-4 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="px-3 py-1 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/45 text-xs font-bold text-[#F3E5AB]">
@@ -1601,16 +1710,16 @@ export default function TarotCoupleHomePage() {
                         </span>
                       ) : null}
                     </div>
-                    <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#F8F5F0]">
+                    <h2 className="font-display text-xl sm:text-3xl font-bold text-[#F8F5F0]">
                       Thông Điệp Vũ Trụ Gửi Đến @{readingSuccess.nickname}
                     </h2>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setFlippedCards([true, true, true])}
-                      className="px-4 py-2.5 rounded-2xl bg-[#171424] hover:bg-[#221D34] border border-[#D4AF37]/45 text-xs font-semibold text-[#F3E5AB] transition-colors cursor-pointer"
+                      className="px-3.5 py-2 rounded-2xl bg-[#171424] hover:bg-[#221D34] border border-[#D4AF37]/45 text-xs font-semibold text-[#F3E5AB] transition-colors cursor-pointer"
                     >
                       <Eye className="w-3.5 h-3.5 inline mr-1.5" />
                       Lật mở cả 3 lá
@@ -1622,7 +1731,7 @@ export default function TarotCoupleHomePage() {
                         setStoryModalReading(readingSuccess);
                         setIsStoryModalOpen(true);
                       }}
-                      className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#E6C665] text-[#09080D] text-xs font-bold shadow-[0_6px_20px_rgba(212,175,55,0.3)] hover:brightness-110 transition-all cursor-pointer"
+                      className="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#E6C665] text-[#09080D] text-xs font-bold shadow-[0_6px_20px_rgba(212,175,55,0.3)] hover:brightness-110 transition-all cursor-pointer"
                     >
                       <Share2 className="w-3.5 h-3.5 inline mr-1.5" />
                       Xuất Ảnh Story 9:16
@@ -1630,8 +1739,23 @@ export default function TarotCoupleHomePage() {
                   </div>
                 </div>
 
-                {/* 3 Drawn Cards Interactive 3D Reveal Row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center">
+                {/* Mobile Swipe Hint */}
+                <p
+                  className={`${
+                    isPhoneSimulator ? 'block' : 'block sm:hidden'
+                  } text-center text-[11px] font-medium text-[#D4AF37]`}
+                >
+                  ↔ Vuốt ngang để xem lần lượt 3 lá bài 3D hoặc chạm vào lá bài để lật mở
+                </p>
+
+                {/* 3 Drawn Cards Interactive 3D Reveal Row (Horizontal Touch-Snap on Mobile) */}
+                <div
+                  className={
+                    isPhoneSimulator
+                      ? 'flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 pb-2'
+                      : 'flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 sm:grid sm:grid-cols-3 sm:gap-6 justify-items-center pb-2'
+                  }
+                >
                   {readingSuccess.drawnCards.map((drawnSlot, idx) => {
                     const isCardFlipped = flippedCards[idx] ?? true;
                     const analysis =
@@ -1641,7 +1765,11 @@ export default function TarotCoupleHomePage() {
                     return (
                       <div
                         key={drawnSlot.position_index}
-                        className="w-full rounded-3xl bg-[#12101B] border border-[#D4AF37]/30 p-5 flex flex-col items-center space-y-4 shadow-[0_14px_40px_rgba(0,0,0,0.65)]"
+                        className={`${
+                          isPhoneSimulator
+                            ? 'min-w-[85%] snap-center shrink-0'
+                            : 'min-w-[85%] sm:min-w-0 snap-center shrink-0 w-full'
+                        } rounded-3xl bg-[#12101B] border border-[#D4AF37]/30 p-4 sm:p-5 flex flex-col items-center space-y-4 shadow-[0_14px_40px_rgba(0,0,0,0.65)]`}
                       >
                         <div className="text-center">
                           <span className="text-[11px] uppercase tracking-widest text-[#D4AF37] font-semibold">
@@ -1673,7 +1801,7 @@ export default function TarotCoupleHomePage() {
                             <h3 className="font-display text-lg font-bold text-[#F8F5F0]">
                               {drawnSlot.card.roman}. {drawnSlot.card.name_vi}
                             </h3>
-                            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#D4AF37]/15 text-[#F3E5AB] border border-[#D4AF37]/35">
+                            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#D4AF37]/15 text-[#F3E5AB] border border-[#D4AF37]/35 shrink-0">
                               {analysis.energy_keyword}
                             </span>
                           </div>
@@ -1688,14 +1816,24 @@ export default function TarotCoupleHomePage() {
                 </div>
 
                 {/* Reader Greeting Hook, Overall Verdict & Actionable Next Step */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div
+                  className={`grid gap-6 ${
+                    isPhoneSimulator
+                      ? 'grid-cols-1'
+                      : 'grid-cols-1 lg:grid-cols-12'
+                  }`}
+                >
                   {/* Left 7 Cols: Deep Reading */}
-                  <div className="lg:col-span-7 rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-6 sm:p-8 space-y-6">
+                  <div
+                    className={`${
+                      isPhoneSimulator ? '' : 'lg:col-span-7'
+                    } rounded-3xl bg-[#12101B] border border-[#D4AF37]/35 p-5 sm:p-8 space-y-5 sm:space-y-6`}
+                  >
                     <div className="space-y-2">
                       <span className="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">
                         ✦ Lời Mở Đầu Từ {readingSuccess.readerDisplayName}
                       </span>
-                      <p className="font-display text-xl sm:text-2xl italic text-[#F8F5F0] leading-relaxed">
+                      <p className="font-display text-lg sm:text-2xl italic text-[#F8F5F0] leading-relaxed">
                         “{readingSuccess.result.greeting_hook}”
                       </p>
                     </div>
@@ -1721,7 +1859,11 @@ export default function TarotCoupleHomePage() {
                   </div>
 
                   {/* Right 5 Cols: Highlighted Savage Quote Box + Story 9:16 Studio Trigger */}
-                  <div className="lg:col-span-5 rounded-3xl bg-gradient-to-b from-[#1E162B] via-[#151120] to-[#0E0B16] border-2 border-[#D4AF37] p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-[0_20px_60px_rgba(212,175,55,0.2)]">
+                  <div
+                    className={`${
+                      isPhoneSimulator ? '' : 'lg:col-span-5'
+                    } rounded-3xl bg-gradient-to-b from-[#1E162B] via-[#151120] to-[#0E0B16] border-2 border-[#D4AF37] p-5 sm:p-7 flex flex-col justify-between space-y-6 shadow-[0_20px_60px_rgba(212,175,55,0.2)]`}
+                  >
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold uppercase tracking-widest text-[#F3E5AB]">
@@ -1751,8 +1893,8 @@ export default function TarotCoupleHomePage() {
                       </div>
 
                       {/* Active Quote Display */}
-                      <div className="p-5 rounded-2xl bg-[#09080D]/90 border border-[#D4AF37]/40 space-y-3">
-                        <p className="font-display text-xl sm:text-2xl font-bold text-[#F8F5F0] leading-snug">
+                      <div className="p-4 sm:p-5 rounded-2xl bg-[#09080D]/90 border border-[#D4AF37]/40 space-y-3">
+                        <p className="font-display text-lg sm:text-2xl font-bold text-[#F8F5F0] leading-snug">
                           “
                           {readingSuccess.result.shareable_card.savage_quotes[
                             activeQuoteIdx
@@ -1805,14 +1947,14 @@ export default function TarotCoupleHomePage() {
 
                 {/* ================= LÁ BÀI LÀM RÕ THỨ 4 (CLARIFIER CARD — 5 ⭐) ================= */}
                 {cliffhangerData ? (
-                  <div className="rounded-3xl bg-gradient-to-r from-[#1D152B] via-[#141020] to-[#1D152B] border-2 border-[#D4AF37]/50 p-6 sm:p-8 space-y-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+                  <div className="rounded-3xl bg-gradient-to-r from-[#1D152B] via-[#141020] to-[#1D152B] border-2 border-[#D4AF37]/50 p-5 sm:p-8 space-y-5 sm:space-y-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
                       <div className="space-y-1">
                         <span className="px-3 py-1 rounded-full bg-[#D4AF37]/20 border border-[#F3E5AB] text-xs font-bold text-[#F3E5AB] inline-flex items-center gap-1.5">
                           <Unlock className="w-3.5 h-3.5 text-[#D4AF37]" />
                           Lá Bài Làm Rõ Thứ 4 (Clarifier Card • {cliffhangerData.clarifier_cost_stars} ⭐)
                         </span>
-                        <h3 className="font-display text-2xl font-bold text-[#F8F5F0] pt-1">
+                        <h3 className="font-display text-xl sm:text-2xl font-bold text-[#F8F5F0] pt-1">
                           Đào Sâu Góc Khuất Chưa Lộ Diện Trong 3 Lá Đầu
                         </h3>
                       </div>
@@ -1892,9 +2034,17 @@ export default function TarotCoupleHomePage() {
                       <motion.div
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center pt-2"
+                        className={`grid gap-6 items-center pt-2 ${
+                          isPhoneSimulator
+                            ? 'grid-cols-1'
+                            : 'grid-cols-1 md:grid-cols-12'
+                        }`}
                       >
-                        <div className="md:col-span-4 flex flex-col items-center space-y-2">
+                        <div
+                          className={`${
+                            isPhoneSimulator ? '' : 'md:col-span-4'
+                          } flex flex-col items-center space-y-2`}
+                        >
                           <TarotCardVisual
                             card={clarifierCard.card}
                             reversed={clarifierCard.reversed}
@@ -1908,7 +2058,11 @@ export default function TarotCoupleHomePage() {
                           />
                         </div>
 
-                        <div className="md:col-span-8 rounded-2xl bg-[#09080D]/85 border border-[#D4AF37]/45 p-5 sm:p-6 space-y-4">
+                        <div
+                          className={`${
+                            isPhoneSimulator ? '' : 'md:col-span-8'
+                          } rounded-2xl bg-[#09080D]/85 border border-[#D4AF37]/45 p-4 sm:p-6 space-y-4`}
+                        >
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <span className="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-xs font-bold text-emerald-200">
                               ✓ Đã mở khóa Lá Làm Rõ (-{clarifierCard.starsSpent} ⭐)
@@ -1968,7 +2122,7 @@ export default function TarotCoupleHomePage() {
       </main>
 
       {/* ================= FOOTER ================= */}
-      <footer className="relative z-10 border-t border-white/10 bg-[#09080D]/90 py-5 px-4 mt-12">
+      <footer className="relative z-10 border-t border-white/10 bg-[#09080D]/90 py-5 px-4 mt-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#A39BB5]">
           <p>
             Tarot là hình thức giải trí và tự phản chiếu, không thay thế tư vấn chuyên môn.
@@ -1984,6 +2138,24 @@ export default function TarotCoupleHomePage() {
           </div>
         </div>
       </footer>
+
+      {/* ================= MOBILE THUMB-ZONE BOTTOM NAVIGATION ================= */}
+      <MobileBottomNav
+        activeTab={activeMainMode}
+        onSelectTab={(tab) => setActiveMainMode(tab)}
+        starsBalance={quota.starsBalance ?? 15}
+        streakDays={quota.streakDays ?? 1}
+        remainingToday={quota.remainingToday}
+        onOpenDailyStreak={() => setIsDailyStreakModalOpen(true)}
+        onOpenWallet={() => setIsWalletModalOpen(true)}
+        onOpenWrapped={() => setIsWrappedModalOpen(true)}
+        onOpenTikTokStudio={() => setIsTikTokStudioModalOpen(true)}
+        onOpenReferral={() => setIsReferralModalOpen(true)}
+        onOpenFunnel={() => setIsFunnelModalOpen(true)}
+        onOpenLegal={() => setIsLegalModalOpen(true)}
+        isPhoneSimulator={isPhoneSimulator}
+        onTogglePhoneSimulator={() => setIsPhoneSimulator((prev) => !prev)}
+      />
 
       {/* ================= MODALS ================= */}
       {storyModalReading ? (
@@ -2165,6 +2337,7 @@ export default function TarotCoupleHomePage() {
           </motion.div>
         ) : null}
       </AnimatePresence>
+      </div>
     </div>
   );
 }
