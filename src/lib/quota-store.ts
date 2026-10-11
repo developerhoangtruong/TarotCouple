@@ -284,23 +284,51 @@ export function simpleHash(input: string): string {
 }
 
 /**
- * Extract client identifier from Request headers / cookies + IP hash per PLAN.md Section 8.5
+ * Extract client identifier from Request headers / cookies + IP hash per PLAN.md Section 8.5.
+ * - In production (when `x-forwarded-for` or `x-real-ip` is present from Vercel's edge proxy),
+ *   the key is bound to the server-side IP hash so clearing browser localStorage/cookies or
+ *   opening an Incognito window on the same network CANNOT reset daily free turns.
+ * - In local/automated test environments without proxy IP headers, falls back to `x-client-id`
+ *   so multi-user unit tests remain isolated.
  */
 export function resolveClientKey(req?: Request): string {
   if (!req) return 'anon_default';
+
+  const forwardedFor = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+  const realIp = req.headers.get('x-real-ip')?.trim();
+  const clientIp = forwardedFor || realIp;
+
+  // If Vercel/reverse-proxy provides a real client IP, bind strictly to server-side IP hash
+  if (clientIp && clientIp !== '127.0.0.1' && clientIp !== '::1') {
+    const ipHash = simpleHash(`ip:${clientIp}`);
+    return `ip_${ipHash}`;
+  }
 
   const explicitClientId = req.headers.get('x-client-id')?.trim();
   const cookieHeader = req.headers.get('cookie') || '';
   const cookieMatch = cookieHeader.match(/(?:^|;\s*)tc_client_id=([^;]+)/);
   const cookieClientId = cookieMatch?.[1]?.trim();
 
-  const forwardedFor = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
   const userAgent = req.headers.get('user-agent')?.slice(0, 120) || 'unknown-ua';
-  const ipHash = simpleHash(`${forwardedFor}|${userAgent}`);
+  const localHash = simpleHash(`local|${userAgent}`);
 
   const baseId = explicitClientId || cookieClientId || 'guest';
   const sanitizedBase = baseId.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 48) || 'guest';
-  return `${sanitizedBase}:${ipHash}`;
+  return `${sanitizedBase}:${localHash}`;
+}
+
+/**
+ * Check if request is authorized to view internal founder/admin funnel & unit economics metrics.
+ */
+export function isAdminRequest(req: Request): boolean {
+  const url = new URL(req.url);
+  const adminQuery = url.searchParams.get('admin');
+  const adminHeader = req.headers.get('x-admin-mode');
+  const configuredSecret = process.env.ADMIN_SECRET?.trim();
+  if (configuredSecret) {
+    return adminHeader === configuredSecret || adminQuery === configuredSecret;
+  }
+  return adminHeader === '1' || adminQuery === '1';
 }
 
 function getOrCreateClientRecord(clientKey: string): ClientQuotaRecord {

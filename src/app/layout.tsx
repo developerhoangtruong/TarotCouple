@@ -20,14 +20,13 @@ const cormorant = Cormorant_Garamond({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   themeColor: "#09080D",
 };
 
 export const metadata: Metadata = {
-  title: "Tarot Couple — Bốc Bài Tarot AI Gen Z (Bà Cố Mỏ Hỗn & Tiên Tử Chữa Lành)",
+  title: "Tarot Couple — Bốc Bài Tarot AI Gen Z",
   description:
-    "Trải nghiệm bốc bài Tarot AI phản chiếu tâm lý với 22 lá Major Arcana Rider-Waite-Smith 1909. Nhận câu chốt hạ cực gắt và xuất ảnh Story 9:16 chia sẻ ngay.",
+    "Trải nghiệm bốc bài Tarot AI phản chiếu tâm lý với trọn bộ 78 lá Rider-Waite-Smith 1909. Chọn Reader hợp tần số, nhận câu chốt hạ và xuất ảnh Story 9:16.",
   manifest: "/manifest.json",
   icons: {
     icon: "/icon.svg",

@@ -109,6 +109,8 @@ export default function TarotCoupleHomePage() {
 
   // Desktop iPhone 16 Pro Frame Simulator Mode (default false)
   const [isPhoneSimulator, setIsPhoneSimulator] = useState<boolean>(false);
+  // Founder/admin mode — internal tools visible only when ?admin=1 is in URL
+  const [isFounderMode, setIsFounderMode] = useState<boolean>(false);
 
   // Navigation & Flow Steps (Solo Mode)
   const [step, setStep] = useState<RitualStep>(1);
@@ -121,7 +123,7 @@ export default function TarotCoupleHomePage() {
   const [nickname, setNickname] = useState<string>('Mèo Đêm');
   const [birthYear, setBirthYear] = useState<number>(2004);
   const [selectedTopic, setSelectedTopic] = useState<TopicId>('love');
-  const [deckMode, setDeckMode] = useState<DeckMode>('major_22');
+  const [deckMode, setDeckMode] = useState<DeckMode>('full_78');
   const [questionText, setQuestionText] = useState<string>('');
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -228,6 +230,10 @@ export default function TarotCoupleHomePage() {
         if (refParam && refParam.trim()) {
           setReferralCodeParam(refParam.trim().toUpperCase());
           setIsReferralModalOpen(true);
+        }
+        // Founder/admin mode: hidden tools visible only when ?admin=1 is in URL
+        if (params.get('admin') === '1' || params.get('founder') === '1') {
+          setIsFounderMode(true);
         }
       }
     } catch {
@@ -629,7 +635,8 @@ export default function TarotCoupleHomePage() {
 
   return (
     <div className={isPhoneSimulator ? 'min-h-dvh bg-[#050408] sm:py-2' : ''}>
-      {/* Desktop Floating Simulator Mode Pill (sm: and above) */}
+      {/* Desktop Floating Simulator Mode Pill (sm: and above) — only in Founder Mode */}
+      {isFounderMode ? (
       <div className="hidden sm:flex justify-center pt-2 pb-1 relative z-50">
         <button
           type="button"
@@ -650,6 +657,7 @@ export default function TarotCoupleHomePage() {
           )}
         </button>
       </div>
+      ) : null}
 
       <div
         className={
@@ -728,40 +736,23 @@ export default function TarotCoupleHomePage() {
                 <span>🔮 {quota.remainingToday} lượt</span>
               </button>
 
-              {/* 3. Desktop Khung ĐT Toggle Button */}
-              <button
-                type="button"
-                onClick={() => setIsPhoneSimulator((prev) => !prev)}
-                className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-[#D4AF37]/35 text-[11px] font-semibold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
-                title="Chuyển đổi Khung Điện Thoại (iPhone 16 Pro) / Toàn Màn Hình"
-              >
-                <span>{isPhoneSimulator ? '🖥️ Toàn Màn' : '📱 Khung ĐT'}</span>
-              </button>
+              {/* 3. Desktop Khung ĐT Toggle Button — only in Founder Mode */}
+              {isFounderMode ? (
+                <button
+                  type="button"
+                  onClick={() => setIsPhoneSimulator((prev) => !prev)}
+                  className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-[#D4AF37]/35 text-[11px] font-semibold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
+                  title="Chuyển đổi Khung Điện Thoại (iPhone 16 Pro) / Toàn Màn Hình"
+                >
+                  <span>{isPhoneSimulator ? '🖥️ Toàn Màn' : '📱 Khung ĐT'}</span>
+                </button>
+              ) : null}
             </div>
           </div>
 
           {/* Subtle Horizontal Scrollable Quick-Chip Bar (never wraps onto multiple lines) */}
           <div className="max-w-6xl mx-auto px-3 sm:px-4 py-1.5 border-t border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar whitespace-nowrap">
-            <button
-              type="button"
-              onClick={() => setIsWrappedModalOpen(true)}
-              data-testid="topbar-wrapped-btn"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/15 hover:bg-purple-500/25 border border-[#D4AF37]/40 text-[11px] font-bold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
-              title="Hồ Sơ Tâm Linh Cuối Tháng (Spiritual Wrapped 9:16)"
-            >
-              <span>🌙 Wrapped Tháng 10</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsTikTokStudioModalOpen(true)}
-              data-testid="topbar-tiktok-btn"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/40 text-[11px] font-bold text-rose-200 transition-colors cursor-pointer shrink-0"
-              title="Xưởng Seeding TikTok & Reels 0đ (3-Slide Carousel Studio)"
-            >
-              <span>🎬 TikTok Studio</span>
-            </button>
-
+            {/* Public: Referral/Gift */}
             <button
               type="button"
               onClick={() => setIsReferralModalOpen(true)}
@@ -772,6 +763,7 @@ export default function TarotCoupleHomePage() {
               <span>🎁 Mời Bạn +5⭐</span>
             </button>
 
+            {/* Public: Daily Streak */}
             <button
               type="button"
               onClick={() => setIsDailyStreakModalOpen(true)}
@@ -782,28 +774,52 @@ export default function TarotCoupleHomePage() {
               <span>🔥 {quota.streakDays ?? 1} ngày</span>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setIsFunnelModalOpen(true)}
-              data-testid="topbar-funnel-btn"
-              className={`${
-                isPhoneSimulator ? 'hidden' : 'hidden md:inline-flex'
-              } items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-[11px] font-semibold text-[#D8D2E7] transition-colors cursor-pointer shrink-0`}
-              title="Bảng Kiểm Chứng Giả Định Thị Trường & Chi Phí AI"
-            >
-              <span>📊 Funnel</span>
-            </button>
-
+            {/* Public: Legal */}
             <button
               type="button"
               onClick={() => setIsLegalModalOpen(true)}
-              className={`${
-                isPhoneSimulator ? 'hidden' : 'hidden lg:inline-flex'
-              } items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-[#A39BB5] hover:text-[#F8F5F0] transition-colors cursor-pointer shrink-0`}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-[#A39BB5] hover:text-[#F8F5F0] transition-colors cursor-pointer shrink-0"
               title="Điều khoản, Quyền riêng tư & Chính sách độ tuổi 10+"
             >
               <span>⚖️ Pháp lý</span>
             </button>
+
+            {/* ——— Founder-Only Internal Tools (hidden from public users) ——— */}
+            {isFounderMode ? (
+              <>
+                <span className="text-[9px] text-[#D4AF37]/60 px-1 shrink-0">|</span>
+
+                <button
+                  type="button"
+                  onClick={() => setIsWrappedModalOpen(true)}
+                  data-testid="topbar-wrapped-btn"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/15 hover:bg-purple-500/25 border border-[#D4AF37]/40 text-[11px] font-bold text-[#F3E5AB] transition-colors cursor-pointer shrink-0"
+                  title="Hồ Sơ Tâm Linh Cuối Tháng (Spiritual Wrapped 9:16)"
+                >
+                  <span>🌙 Wrapped</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsTikTokStudioModalOpen(true)}
+                  data-testid="topbar-tiktok-btn"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/40 text-[11px] font-bold text-rose-200 transition-colors cursor-pointer shrink-0"
+                  title="Xưởng Seeding TikTok & Reels 0đ (3-Slide Carousel Studio)"
+                >
+                  <span>🎬 TikTok Studio</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsFunnelModalOpen(true)}
+                  data-testid="topbar-funnel-btn"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-[11px] font-semibold text-[#D8D2E7] transition-colors cursor-pointer shrink-0"
+                  title="Bảng Kiểm Chứng Giả Định Thị Trường & Chi Phí AI"
+                >
+                  <span>📊 Funnel</span>
+                </button>
+              </>
+            ) : null}
           </div>
         </header>
 
@@ -904,7 +920,7 @@ export default function TarotCoupleHomePage() {
                 className="space-y-6 sm:space-y-8"
               >
                 {/* Hero Header */}
-                <div className="border-b border-[#D4AF37]/20 pb-5 sm:pb-6 space-y-2">
+                <div className="border-b border-[#D4AF37]/20 pb-5 sm:pb-6 space-y-3">
                   <p className="text-[11px] sm:text-xs uppercase tracking-[0.18em] text-[#D4AF37] font-semibold">
                     ✦ Nghi Thức Tarot Phản Chiếu Tâm Lý • 4 Persona & Trọn Bộ 78 Lá RWS ✦
                   </p>
@@ -920,7 +936,42 @@ export default function TarotCoupleHomePage() {
                   <p className="text-xs sm:text-sm text-[#A39BB5] max-w-2xl leading-relaxed">
                     Lá bài do hệ thống xáo ngẫu nhiên chuẩn mật mã (CSPRNG). Tự tay rút 3 lá định mệnh, mở khóa Lá Làm Rõ thứ 4 và xuất ngay ảnh Story 9:16 sắc sảo.
                   </p>
+
+                  {/* ─── Quick Age / Năm Sinh Selector (Bảo vệ độ tuổi 10+) ─── */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <label htmlFor="step1-birth-year" className="text-xs font-semibold text-[#D4AF37] shrink-0">
+                      🗓️ Năm sinh (bảo vệ 10+):
+                    </label>
+                    <select
+                      id="step1-birth-year"
+                      value={birthYear}
+                      onChange={(e) => setBirthYear(Number(e.target.value))}
+                      className="px-2.5 py-1.5 rounded-xl bg-[#12101B] border border-[#D4AF37]/40 text-xs font-semibold text-[#F3E5AB] cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
+                    >
+                      {BIRTH_YEAR_OPTIONS.map((yr) => (
+                        <option key={yr} value={yr}>
+                          {yr} ({new Date().getFullYear() - yr} tuổi)
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Live Age Policy Badge */}
+                    {agePolicy.tier === 'kid_teen_10_15' ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/45 text-xs font-bold text-emerald-200 animate-pulse">
+                        🌸 Chế độ Học Đường (10–15 tuổi): Bà Ngoại Vui Tính · Khóa thanh toán
+                      </span>
+                    ) : agePolicy.tier === 'teen_16_17' ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/40 text-xs font-semibold text-amber-200">
+                        🔞 Chế độ Teen 16–17: nội dung phù hợp lứa tuổi
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-[#A39BB5]">
+                        ✓ 18+ · Toàn bộ tính năng mở khóa
+                      </span>
+                    )}
+                  </div>
                 </div>
+
 
                 {/* All 4 Readers Selectable Bento Grid */}
                 <div
